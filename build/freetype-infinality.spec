@@ -53,7 +53,7 @@ BuildRequires: libX11-devel
 
 Provides: %{name}-bytecode
 Provides: freetype-infinality
-Requires: fontconfig-infinality
+Requires: fontconfig-infinality policycoreutils policycoreutils-python
 Obsoletes: freetype-subpixel
 Conflicts: freetype-freeworld
 
@@ -247,7 +247,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/ldconfig
 #/usr/sbin/semanage fcontext -a -t textrel_shlib_t %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
 /usr/sbin/semanage fcontext -a -t textrel_shlib_t /usr/lib/freetype-infinality/libfreetype.so.%{freetypelibversion}
-/sbin/restorecon %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
+/usr/sbin/restorecon %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
 #/bin/echo
 #/bin/echo "##############################################"
 #/bin/echo "There are important changes in this release.  Please install the infinality-settings package or make sure these environment variables are present:  http://www.infinality.net/files/infinality-settings.sh"
