@@ -1,7 +1,7 @@
-Infinality Patches - 2012-06-15
+Infinality Patches - 2013-01-04
 ======================================================
 
-This should patch without errors to Freetype 2.4.10.  See the files themselves 
+This should patch without errors to Freetype 2.4.11.  See the files themselves
 for the changelog.  Visit infinality.net for more information and a 
 forum.
 
@@ -9,7 +9,7 @@ Fedora users should run these commands instead of installing these files
 manually:
 
 sudo rpm -Uvh http://www.infinality.net/fedora/linux/infinality-repo-1.0-1.noarch.rpm
-sudo yum install freetype-infinality fontconfig-infinality libXft-infinality
+sudo yum install freetype-infinality fontconfig-infinality
 
 
 All necessary files for other distros are located here:
@@ -20,10 +20,11 @@ http://www.infinality.net/blog/infinality-freetype-patches/
 Patches
 =======
 
-freetype-add-subpixel-hinting-infinality-20120615-01.patch    - Subpixel hinting patches.  Apply first.
-freetype-enable-subpixel-hinting-infinality-20120403-01.patch - Enable subpixel hinting.   Apply second.
-freetype-entire-infinality-patchset-20120615-01.patch         - All other infinality enhancements.  Apply third.
+Subpixel hinting enable patches.  Apply first:
+  freetype-enable-subpixel-hinting-infinality-20120615-01.patch
 
+All other infinality enhancements.  Apply second:
+  freetype-entire-infinality-patchset-20130104-01.patch
 
 
 

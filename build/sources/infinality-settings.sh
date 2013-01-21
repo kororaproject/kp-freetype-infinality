@@ -52,14 +52,14 @@ SET_XFT_SETTINGS=true
 # These only affect legacy programs, and *parts* of some modern programs like 
 # google-chrome.  We only deal with these settings because we have to, otherwise 
 # crap will slip by.  I recommend using hintslight and autohint as the defaults
-# normally in local.conf.  The reason hintfull and autohint:0 is needed here  
+# normally in /etc/fonts/.  The reason hintfull and autohint:0 is needed here  
 # because otherwise some programs will occassionally request slight hinting for 
 # a truetype font. When a program does this, Freetype automatically uses the 
 # autohinter, when you may actually want it to be rendered with the TT hinter, 
-# (if specified in local.conf).  So setting this to hintfull guarantees that the 
+# (if specified in /etc/fonts/).  So setting this to hintfull guarantees that the 
 # TT font will be rendered with the TT hinter (assuming it is specified in 
-# /etc/fonts/local.conf to be rendered that way.)  For TT fonts that you want 
-# rendered with autohint, specifiying that in the /etc/fonts/local.conf 
+# /etc/fonts/ to be rendered that way.)  For TT fonts that you want 
+# rendered with autohint, specifiying that in the /etc/fonts/ 
 # should be enough.  But you might think that by setting this to hintfull 
 # that it's going to use Freetype's full autohinting (which we *completely* 
 # avoid) for fonts you want autohinted.  This is where 
@@ -677,7 +677,7 @@ export INFINALITY_FT_AUTOHINT_INCREASE_GLYPH_HEIGHTS=true
 # Experimental emboldening values for OSX mode
 export INFINALITY_FT_GLOBAL_EMBOLDEN_X_VALUE=0
 export INFINALITY_FT_GLOBAL_EMBOLDEN_Y_VALUE=0
-export INFINALITY_FT_BOLD_EMBOLDEN_X_VALUE=0
+export INFINALITY_FT_BOLD_EMBOLDEN_X_VALUE=0     # This one seems to crash at anything other than 0
 export INFINALITY_FT_BOLD_EMBOLDEN_Y_VALUE=0
 
 #################################################################
@@ -685,13 +685,14 @@ export INFINALITY_FT_BOLD_EMBOLDEN_Y_VALUE=0
 #################################################################
 #
 # Set the USE_STYLE variable below to try each example.
-# Make sure to set your style in /etc/fonts/local.conf too.
+# Make sure to set your style in /etc/fonts/infinality.conf too.
 #
 # Possible options: 
 # 
 # DEFAULT      - Use above settings.  A compromise that should please most people.
 # OSX          - Simulate OSX rendering
-# UBUNTU       - Simulate UBUNTU rendering
+# IPAD         - Simulate iPad rendering
+# UBUNTU       - Simulate Ubuntu rendering
 # LINUX        - Generic "Linux" style - no snapping or certain other tweaks
 # WINDOWS      - Simulate Windows rendering
 # WINDOWS7     - Simulate Windows rendering with normal glyphs
@@ -711,7 +712,8 @@ export INFINALITY_FT_BOLD_EMBOLDEN_Y_VALUE=0
 USE_STYLE="DEFAULT"
 
 
-### NEEDS WORK ###
+
+### WARNING - NEEDS WORK - ALSO LIABLE TO CRASH APPLICATIONS ###
 ################# OSX STYLE #################
 if [ "$USE_STYLE" = "OSX" ]; then
 
@@ -734,7 +736,36 @@ export INFINALITY_FT_STEM_SNAPPING_SLIDING_SCALE=0
 export INFINALITY_FT_USE_KNOWN_SETTINGS_ON_SELECTED_FONTS=false
 export INFINALITY_FT_GLOBAL_EMBOLDEN_X_VALUE=0
 export INFINALITY_FT_GLOBAL_EMBOLDEN_Y_VALUE=8
-export INFINALITY_FT_BOLD_EMBOLDEN_X_VALUE=16
+export INFINALITY_FT_BOLD_EMBOLDEN_X_VALUE=0
+export INFINALITY_FT_BOLD_EMBOLDEN_Y_VALUE=0
+
+fi
+
+
+
+################# IPAD STYLE #################
+if [ "$USE_STYLE" = "IPAD" ]; then
+
+export INFINALITY_FT_FILTER_PARAMS="00 00 100 00 00"
+export INFINALITY_FT_GRAYSCALE_FILTER_STRENGTH=100
+export INFINALITY_FT_FRINGE_FILTER_STRENGTH=0
+export INFINALITY_FT_AUTOHINT_HORIZONTAL_STEM_DARKEN_STRENGTH=0
+export INFINALITY_FT_AUTOHINT_VERTICAL_STEM_DARKEN_STRENGTH=0
+export INFINALITY_FT_WINDOWS_STYLE_SHARPENING_STRENGTH=0
+export INFINALITY_FT_CHROMEOS_STYLE_SHARPENING_STRENGTH=0
+export INFINALITY_FT_STEM_ALIGNMENT_STRENGTH=0
+export INFINALITY_FT_STEM_FITTING_STRENGTH=0
+export INFINALITY_FT_GAMMA_CORRECTION="1000 80"
+export INFINALITY_FT_BRIGHTNESS="0"
+export INFINALITY_FT_CONTRAST="0"
+export INFINALITY_FT_USE_VARIOUS_TWEAKS=false
+export INFINALITY_FT_AUTOHINT_INCREASE_GLYPH_HEIGHTS=false
+export INFINALITY_FT_AUTOHINT_SNAP_STEM_HEIGHT=0
+export INFINALITY_FT_STEM_SNAPPING_SLIDING_SCALE=0
+export INFINALITY_FT_USE_KNOWN_SETTINGS_ON_SELECTED_FONTS=false
+export INFINALITY_FT_GLOBAL_EMBOLDEN_X_VALUE=0
+export INFINALITY_FT_GLOBAL_EMBOLDEN_Y_VALUE=0
+export INFINALITY_FT_BOLD_EMBOLDEN_X_VALUE=0
 export INFINALITY_FT_BOLD_EMBOLDEN_Y_VALUE=0
 
 fi

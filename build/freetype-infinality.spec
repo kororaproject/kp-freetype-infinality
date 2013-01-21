@@ -4,17 +4,17 @@
 
 %{!?with_xfree86:%define with_xfree86 1}
 
-%define infinalityrelease 20120615_01
+%define infinalityrelease 20130104_04
 
 %define freetypemajorversion 6
 
-%define freetypelibversion 6.9.0
-%define oldfreetypelibversion 6.8.1
+%define freetypelibversion 6.10.0
+%define oldfreetypelibversion 6.9.0
 %define createsymlink 1
 
 Summary: A free and portable font rendering engine
 Name: freetype-infinality
-Version: 2.4.10
+Version: 2.4.11
 Release: 1.%{infinalityrelease}%{?dist}
 License: FTL or GPLv2+
 Group: System Environment/Libraries
@@ -23,9 +23,9 @@ Source:  http://download.savannah.gnu.org/releases/freetype/freetype-%{version}.
 #Source1: http://download.savannah.gnu.org/releases/freetype/freetype-doc-%{version}.tar.bz2
 #Source2: http://download.savannah.gnu.org/releases/freetype/ft2demos-%{version}.tar.bz2
 
-Patch20: freetype-add-subpixel-hinting-infinality-20120615-01.patch
+#Patch20: freetype-add-subpixel-hinting-infinality-20120616-01.patch
 Patch21: freetype-enable-subpixel-hinting-infinality-20120615-01.patch
-Patch22: freetype-entire-infinality-patchset-20120615-01.patch
+Patch22: freetype-entire-infinality-patchset-20130104-01.patch
 
 Source91: infinality-settings.sh
 Source92: README.infinality
@@ -53,7 +53,7 @@ BuildRequires: libX11-devel
 
 Provides: %{name}-bytecode
 Provides: freetype-infinality
-Requires: fontconfig-infinality policycoreutils policycoreutils-python
+Requires: fontconfig-infinality
 Obsoletes: freetype-subpixel
 Conflicts: freetype-freeworld
 
@@ -102,7 +102,7 @@ FreeType.
 #%setup -q -b 1 -a 2
 %setup -q -n freetype-%{version}
 
-%patch20  -p1 -b .add-subpixel-hinting
+#%patch20  -p1 -b .add-subpixel-hinting
 %patch21  -p1 -b .enable-subpixel-hinting
 %patch22  -p1 -b .entire-infinality-patchset
 #%patch23  -p1 -b .temporary-filter-fix
@@ -219,15 +219,15 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 #cp %{SOURCE90} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{SOURCE91} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{SOURCE92} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
-cp %{PATCH20} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
+#cp %{PATCH20} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{PATCH21} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{PATCH22} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/%{name}-%{_arch}.sh $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/%{name}.sh
 cp %{SOURCE91} $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/
 
 cd $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
-tar jcf %{name}-%{version}-%{infinalityrelease}-%{_arch}.tar.bz2 %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH20}` `basename  %{PATCH21}` `basename  %{PATCH22}`
-rm %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH20}` `basename  %{PATCH21}` `basename  %{PATCH22}`
+tar jcf %{name}-%{version}-%{infinalityrelease}-%{_arch}.tar.bz2 %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH21}` `basename  %{PATCH22}`
+rm %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH21}` `basename  %{PATCH22}`
 cd -
 
 %clean
@@ -246,15 +246,19 @@ rm -rf $RPM_BUILD_ROOT
 %post 
 /sbin/ldconfig
 #/usr/sbin/semanage fcontext -a -t textrel_shlib_t %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
-/usr/sbin/semanage fcontext -a -t textrel_shlib_t /usr/lib/freetype-infinality/libfreetype.so.%{freetypelibversion}
-/usr/sbin/restorecon %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
+if [ "${SELINUXTYPE}" == "%1" ] && selinuxenabled && load_policy; then
+  /usr/sbin/semanage fcontext -a -t textrel_shlib_t %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
+  /sbin/restorecon %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
+fi
 #/bin/echo
 #/bin/echo "##############################################"
 #/bin/echo "There are important changes in this release.  Please install the infinality-settings package or make sure these environment variables are present:  http://www.infinality.net/files/infinality-settings.sh"
 #/bin/echo "##############################################"
 
-%postun 
-/usr/sbin/semanage fcontext -d -t textrel_shlib_t %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
+%postun
+if [ "${SELINUXTYPE}" == "%1" ] && selinuxenabled && load_policy; then
+  /usr/sbin/semanage fcontext -d -t textrel_shlib_t %{_libdir}/freetype-infinality/libfreetype.so.%{freetypelibversion}
+fi
 /sbin/ldconfig
 
 
