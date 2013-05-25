@@ -4,17 +4,17 @@
 
 %{!?with_xfree86:%define with_xfree86 1}
 
-%define infinalityrelease 20130104_04
+%define infinalityrelease 20130514_01
 
 %define freetypemajorversion 6
 
-%define freetypelibversion 6.10.0
-%define oldfreetypelibversion 6.9.0
+%define freetypelibversion 6.10.1
+%define oldfreetypelibversion 6.10.0
 %define createsymlink 1
 
 Summary: A free and portable font rendering engine
 Name: freetype-infinality
-Version: 2.4.11
+Version: 2.4.12
 Release: 1.%{infinalityrelease}%{?dist}
 License: FTL or GPLv2+
 Group: System Environment/Libraries
@@ -23,29 +23,19 @@ Source:  http://download.savannah.gnu.org/releases/freetype/freetype-%{version}.
 #Source1: http://download.savannah.gnu.org/releases/freetype/freetype-doc-%{version}.tar.bz2
 #Source2: http://download.savannah.gnu.org/releases/freetype/ft2demos-%{version}.tar.bz2
 
-#Patch20: freetype-add-subpixel-hinting-infinality-20120616-01.patch
-Patch21: freetype-enable-subpixel-hinting-infinality-20120615-01.patch
-Patch22: freetype-entire-infinality-patchset-20130104-01.patch
+Patch22: freetype-entire-infinality-patchset-20130514-01.patch
 
 Source91: infinality-settings.sh
 Source92: README.infinality
 
-# Enable otvalid and gxvalid modules
-Patch46:  freetype-2.2.1-enable-valid.patch
-# Enable additional demos
-Patch47:  freetype-2.3.11-more-demos.patch
-
 # Fix multilib conflicts
 Patch88:  freetype-multilib.patch
 
-#Patch89:  freetype-2.4.9-CVE-2012-1139.patch
-#Patch90:  freetype-2.4.9-CVE-2012-1141.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=959771
+#Patch89:  freetype-2.4.12-enable-adobe-cff-engine.patch
 
-# https://savannah.nongnu.org/bugs/?35833
-#Patch91:  freetype-2.4.9-loop-exit-condition.patch
-
-#https://savannah.nongnu.org/bugs/?35847
-#Patch92:  freetype-2.4.9-incremental-interface.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=961855
+Patch90:  freetype-2.4.12-pkgconfig.patch
 
 Buildroot: %{_tmppath}/%{name}-%{version}-root-%(%{__id_u} -n)
 
@@ -102,22 +92,12 @@ FreeType.
 #%setup -q -b 1 -a 2
 %setup -q -n freetype-%{version}
 
-#%patch20  -p1 -b .add-subpixel-hinting
-%patch21  -p1 -b .enable-subpixel-hinting
 %patch22  -p1 -b .entire-infinality-patchset
-#%patch23  -p1 -b .temporary-filter-fix
-
-#%patch46  -p1 -b .enable-valid
-
-#pushd ft2demos-%{version}
-#%patch47  -p1 -b .more-demos
-#popd
-
 %patch88 -p1 -b .multilib
-#%patch89 -p1 -b .CVE-2012-1139
-#%patch90 -p1 -b .CVE-2012-1141
-#%patch91 -p1 -b .loop-exit-condition
-#%patch92 -p1 -b .incremental-interface
+
+#%patch89 -p1 -b .adobe-cff
+
+%patch90 -p1 -b .pkgconfig
 
 %build
 
@@ -213,21 +193,23 @@ echo "%{_libdir}/%{name}" \
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/profile.d
 
-/bin/echo "PRELOAD=1; if [ -f /etc/sysconfig/fonts ]; then . /etc/sysconfig/fonts; fi; A1=\`arch\`; A2=%{_arch}; if [ \"\${A1:0:1}\" = \"\${A2:0:1}\" -a ! \"\$PRELOAD\" = \"0\" ]; then ADDED=\`/bin/echo \$LD_PRELOAD | grep \"%{_libdir}/libfreetype.so.6\" | wc -l\`; if [ \"\$ADDED\" = \"0\" ]; then export LD_PRELOAD=%{_libdir}/%{name}/libfreetype.so.%{freetypemajorversion}:\$LD_PRELOAD ; fi; fi" > $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/%{name}-%{_arch}.sh
+#/bin/echo "PRELOAD=1; if [ -f /etc/sysconfig/fonts ]; then . /etc/sysconfig/fonts; fi; A1=\`arch\`; A2=%{_arch}; if [ \"\${A1:0:1}\" = \"\${A2:0:1}\" -a ! \"\$PRELOAD\" = \"0\" ]; then ADDED=\`/bin/echo \$LD_PRELOAD | grep \"%{_libdir}/libfreetype.so.6\" | wc -l\`; if [ \"\$ADDED\" = \"0\" ]; then export LD_PRELOAD=%{_libdir}/%{name}/libfreetype.so.%{freetypemajorversion}:\$LD_PRELOAD ; fi; fi" > $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/%{name}-%{_arch}.sh
 
 mkdir -p $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 #cp %{SOURCE90} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{SOURCE91} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{SOURCE92} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 #cp %{PATCH20} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
-cp %{PATCH21} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
+#cp %{PATCH21} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
 cp %{PATCH22} $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
-cp $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/%{name}-%{_arch}.sh $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/%{name}.sh
+#cp $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/%{name}-%{_arch}.sh $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/%{name}.sh
 cp %{SOURCE91} $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/
 
 cd $RPM_BUILD_ROOT/usr/share/doc/%{name}-%{version}/
-tar jcf %{name}-%{version}-%{infinalityrelease}-%{_arch}.tar.bz2 %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH21}` `basename  %{PATCH22}`
-rm %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH21}` `basename  %{PATCH22}`
+#tar jcf %{name}-%{version}-%{infinalityrelease}-%{_arch}.tar.bz2 %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH21}` `basename  %{PATCH22}`
+tar jcf %{name}-%{version}-%{infinalityrelease}-%{_arch}.tar.bz2 `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH22}`
+#rm %{name}.sh `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH21}` `basename  %{PATCH22}`
+rm `basename  %{SOURCE91}` `basename  %{SOURCE92}` `basename  %{PATCH22}`
 cd -
 
 %clean
@@ -310,6 +292,40 @@ fi
 #%doc docs/tutorial
 
 %changelog
+* Mon May 13 2013 Marek Kasik <mkasik@redhat.com> - 2.4.12-2
+- Don't use quotes in freetype2.pc
+- Resolves: #961855
+
+* Thu May  9 2013 Marek Kasik <mkasik@redhat.com> - 2.4.12-1
+- Update to 2.4.12
+- Enable Adobe CFF engine
+- Resolves: #959771
+
+* Tue Mar 19 2013 Marek Kasik <mkasik@redhat.com> - 2.4.11-3
+- Fix emboldening:
+    - split out MSB function
+    - fix integer overflows
+    - fix broken emboldening at small sizes
+- Resolves: #891457
+
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.11-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Wed Jan  2 2013 Marek Kasik <mkasik@redhat.com> - 2.4.11-1
+- Update to 2.4.11
+- Resolves: #889177
+
+* Wed Oct 24 2012 Marek Kasik <mkasik@redhat.com> - 2.4.10-3
+- Update License field
+
+* Fri Jul 27 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.10-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Wed Jul 11 2012 Marek Kasik <mkasik@redhat.com> 2.4.10-1
+- Update to 2.4.10
+- Remove patches which are already included in upstream
+- Resolves: #832651
+
 * Fri Mar 30 2012 Marek Kasik <mkasik@redhat.com> 2.4.9-1
 - Update to 2.4.9
 - Fixes various CVEs
