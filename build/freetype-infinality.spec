@@ -15,7 +15,7 @@
 Summary: A free and portable font rendering engine
 Name: freetype-infinality
 Version: 2.4.12
-Release: 1.%{infinalityrelease}%{?dist}
+Release: 1.%{infinalityrelease}%{?dist}.1
 License: FTL or GPLv2+
 Group: System Environment/Libraries
 URL: http://www.freetype.org
